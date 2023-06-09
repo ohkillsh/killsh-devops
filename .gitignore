@@ -36,3 +36,6 @@ terraform.rc
 .terraform.lock.hcl
 
 *.tfplan
+
+private_ssh_key
+public_aks_ssh_key
