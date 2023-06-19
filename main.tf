@@ -11,8 +11,6 @@ module "terraform_infra" {
 
 }
 
-
-
 resource "azurerm_resource_group" "aks" {
   name     = "rg-aks-lab"
   location = "eastus"
@@ -66,3 +64,17 @@ module "aks" {
   depends_on = [module.network]
 }
 
+data "azurerm_key_vault" "global_kv" {
+  name                = var.global_key_vault_name
+  resource_group_name = var.global_resource_group
+
+  depends_on = [module.aks]
+}
+
+resource "azurerm_key_vault_secret" "kv_aks_kubeconfig" {
+  name         = "aks-kubeconfig-raw"
+  value        = module.aks.kube_config_raw
+  key_vault_id = data.azurerm_key_vault.global_kv.id
+
+  depends_on = [data.azurerm_key_vault.global_kv]
+}
