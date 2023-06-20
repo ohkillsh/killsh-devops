@@ -1,3 +1,8 @@
+resource "azurerm_resource_group" "aks" {
+  name     = "rg-aks-lab"
+  location = "eastus"
+}
+
 module "terraform_infra" {
   source = "git@github.com:ohkillsh/killsh-module-terraform-base-infra.git?ref=main"
 
@@ -9,11 +14,6 @@ module "terraform_infra" {
 
   user_tags = var.tags
 
-}
-
-resource "azurerm_resource_group" "aks" {
-  name     = "rg-aks-lab"
-  location = "eastus"
 }
 
 module "network" {
@@ -40,7 +40,6 @@ module "aks" {
   agents_min_count                 = 3
   agents_max_count                 = 3
   agents_size                      = "standard_b4ms"
-  agents_count                     = null # Please set `agents_count` `null` while `enable_auto_scaling` is `true` to avoid possible `agents_count` changes.
   agents_max_pods                  = 110
   agents_pool_name                 = "exnodepool"
   agents_availability_zones        = ["1", "2", "3"]
@@ -78,3 +77,38 @@ resource "azurerm_key_vault_secret" "kv_aks_kubeconfig" {
 
   depends_on = [data.azurerm_key_vault.global_kv]
 }
+
+
+data "azurerm_kubernetes_cluster" "aks" {
+  depends_on          = [module.aks] # refresh cluster state before reading
+  name                = "dev-killsh"
+  resource_group_name = azurerm_resource_group.aks.name
+
+}
+
+
+provider "kubernetes" {
+  host                   = data.azurerm_kubernetes_cluster.aks.kube_config.0.host
+  client_certificate     = base64decode(data.azurerm_kubernetes_cluster.aks.kube_config.0.client_certificate)
+  client_key             = base64decode(data.azurerm_kubernetes_cluster.aks.kube_config.0.client_key)
+  cluster_ca_certificate = base64decode(data.azurerm_kubernetes_cluster.aks.kube_config.0.cluster_ca_certificate)
+
+}
+
+provider "helm" {
+  kubernetes {
+    host                   = data.azurerm_kubernetes_cluster.aks.kube_config.0.host
+    client_certificate     = base64decode(data.azurerm_kubernetes_cluster.aks.kube_config.0.client_certificate)
+    client_key             = base64decode(data.azurerm_kubernetes_cluster.aks.kube_config.0.client_key)
+    cluster_ca_certificate = base64decode(data.azurerm_kubernetes_cluster.aks.kube_config.0.cluster_ca_certificate)
+  }
+}
+
+module "kubernetes-config" {
+  depends_on   = [module.aks]
+  source       = "./kubernetes-config"
+  cluster_name = "dev-killsh"
+  kubeconfig   = data.azurerm_kubernetes_cluster.aks.kube_config_raw
+}
+
+
