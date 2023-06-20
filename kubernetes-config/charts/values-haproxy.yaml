@@ -8,4 +8,4 @@ serviceMonitor:
   enabled: true
 
 service:
-  type: loadbalancer
+  type: LoadBalancer
