@@ -17,58 +17,45 @@ resource "kubernetes_namespace" "test" {
   }
 }
 
-resource "kubernetes_deployment" "test" {
-  metadata {
-    name      = "test"
-    namespace = kubernetes_namespace.test.metadata.0.name
-  }
-  spec {
-    replicas = 2
-    selector {
-      match_labels = {
-        app = "test"
-      }
-    }
-    template {
-      metadata {
-        labels = {
-          app = "test"
-        }
-      }
-      spec {
-        container {
-          image = "nginx:1.19.4"
-          name  = "nginx"
+# resource "helm_release" "nginx_ingress" {
+#   name = "nginx-ingress-controller"
 
-          resources {
-            limits = {
-              memory = "512M"
-              cpu    = "1"
-            }
-            requests = {
-              memory = "256M"
-              cpu    = "50m"
-            }
-          }
-        }
-      }
-    }
-  }
-}
+#   repository = "https://charts.bitnami.com/bitnami"
+#   chart      = "nginx-ingress-controller"
 
-resource "helm_release" "nginx_ingress" {
-  name = "nginx-ingress-controller"
-
-  repository = "https://charts.bitnami.com/bitnami"
-  chart      = "nginx-ingress-controller"
-
-  set {
-    name  = "service.type"
-    value = "ClusterIP"
-  }
-}
+#   set {
+#     name  = "service.type"
+#     value = "ClusterIP"
+#   }
+# }
 
 resource "local_file" "kubeconfig" {
   content  = var.kubeconfig
   filename = "${path.root}/kubeconfig"
+}
+
+
+resource "helm_release" "prometheus_operator" {
+  name       = "prometheus-operator"
+  repository = "https://prometheus-community.github.io/helm-charts"
+  chart      = "kube-prometheus-stack"
+  namespace  = "monitoring"
+
+  values = [
+    file("${path.module}/charts/values-prometheus.yaml")
+  ]
+}
+
+
+resource "helm_release" "haproxy_ingress" {
+  name       = "haproxy"
+  repository = "https://haproxytech.github.io/helm-charts"
+  chart      = "haproxytech"
+  namespace  = "ingress"
+
+  values = [
+    file("${path.module}/charts/values-haproxy.yaml")
+  ]
+
+  depends_on = [helm_release.prometheus_operator]
 }
