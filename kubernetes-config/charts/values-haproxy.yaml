@@ -1,0 +1,11 @@
+autoscaling:
+  enabled: true
+  minReplicas: 2
+  maxReplicas: 7
+
+serviceMonitor:
+  ## Toggle the ServiceMonitor true if you have Prometheus Operator installed and configured
+  enabled: true
+
+service:
+  type: loadbalancer
