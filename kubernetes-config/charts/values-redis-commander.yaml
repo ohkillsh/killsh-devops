@@ -1,0 +1,11 @@
+redis.host: redis-master
+# env:
+# - name: FOLDING_CHAR
+#   value: "/"
+ingress:
+  enabled: true
+  annotations:
+    kubernetes.io/ingress.class: nginx
+  hosts:
+    - host: redis-ui.example.com
+      paths: ["/"]

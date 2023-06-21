@@ -63,33 +63,6 @@ module "aks" {
   depends_on = [module.network]
 }
 
-data "azurerm_key_vault" "global_kv" {
-  name                = var.global_key_vault_name
-  resource_group_name = var.global_resource_group
-
-  depends_on = [module.aks]
-}
-
-data "azurerm_key_vault_secret" "acr_login" {
-  name         = "acr-base-login"
-  key_vault_id = data.azurerm_key_vault.global_kv.id
-
-  depends_on = [data.azurerm_key_vault.global_kv]
-}
-
-data "azurerm_key_vault_secret" "acr_url" {
-  name         = "acr-base-url"
-  key_vault_id = data.azurerm_key_vault.global_kv.id
-
-  depends_on = [data.azurerm_key_vault.global_kv]
-}
-
-data "azurerm_key_vault_secret" "acr_password" {
-  name         = "acr-base-password"
-  key_vault_id = data.azurerm_key_vault.global_kv.id
-
-  depends_on = [data.azurerm_key_vault.global_kv]
-}
 
 
 resource "azurerm_key_vault_secret" "kv_aks_kubeconfig" {
@@ -101,17 +74,12 @@ resource "azurerm_key_vault_secret" "kv_aks_kubeconfig" {
 }
 
 
-data "azurerm_kubernetes_cluster" "aks" {
-  depends_on          = [module.aks] # refresh cluster state before reading
-  name                = "dev-killsh"
-  resource_group_name = azurerm_resource_group.aks.name
 
-}
 
 module "kubernetes-config" {
   source       = "./kubernetes-config"
   cluster_name = "dev-killsh"
-  kubeconfig   = data.azurerm_kubernetes_cluster.aks.kube_config_raw
+  kubeconfig   = module.aks.kube_config_raw
 
   registry_password = data.azurerm_key_vault_secret.acr_password.value
   registry_username = data.azurerm_key_vault_secret.acr_login.value
@@ -124,4 +92,5 @@ module "kubernetes-config" {
     module.aks
   ]
 }
+
 

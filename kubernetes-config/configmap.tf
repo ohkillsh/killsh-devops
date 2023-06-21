@@ -12,10 +12,14 @@ resource "kubernetes_config_map_v1_data" "cfg_coredns" {
     "Corefile" = <<EOF
 .:53 {
     errors
-    health
+    ready
+    health {
+      lameduck 5s
+    }
     kubernetes cluster.local in-addr.arpa ip6.arpa {
-        pods insecure
-        fallthrough in-addr.arpa ip6.arpa
+      pods insecure
+      fallthrough in-addr.arpa ip6.arpa
+      ttl 30
     }
     prometheus :9153
     forward . /etc/resolv.conf
@@ -24,6 +28,8 @@ resource "kubernetes_config_map_v1_data" "cfg_coredns" {
     reload
     loadbalance
 }
+import custom/*.server
+import custom/*.override
 ohkillsh.win:53 {
     errors
     cache 30
@@ -33,6 +39,12 @@ ohkillsh.win:53 {
     }
 }
 EOF    
+  }
+
+  lifecycle {
+    ignore_changes = [
+      data.corefile
+    ]
   }
 
 
