@@ -70,6 +70,28 @@ data "azurerm_key_vault" "global_kv" {
   depends_on = [module.aks]
 }
 
+data "azurerm_key_vault_secret" "acr_login" {
+  name         = "acr-base-login"
+  key_vault_id = data.azurerm_key_vault.global_kv.id
+
+  depends_on = [data.azurerm_key_vault.global_kv]
+}
+
+data "azurerm_key_vault_secret" "acr_url" {
+  name         = "acr-base-url"
+  key_vault_id = data.azurerm_key_vault.global_kv.id
+
+  depends_on = [data.azurerm_key_vault.global_kv]
+}
+
+data "azurerm_key_vault_secret" "acr_password" {
+  name         = "acr-base-password"
+  key_vault_id = data.azurerm_key_vault.global_kv.id
+
+  depends_on = [data.azurerm_key_vault.global_kv]
+}
+
+
 resource "azurerm_key_vault_secret" "kv_aks_kubeconfig" {
   name         = "aks-kubeconfig-raw"
   value        = module.aks.kube_config_raw
@@ -87,10 +109,19 @@ data "azurerm_kubernetes_cluster" "aks" {
 }
 
 module "kubernetes-config" {
-  depends_on   = [module.aks]
   source       = "./kubernetes-config"
   cluster_name = "dev-killsh"
   kubeconfig   = data.azurerm_kubernetes_cluster.aks.kube_config_raw
-}
 
+  registry_password = data.azurerm_key_vault_secret.acr_password.value
+  registry_username = data.azurerm_key_vault_secret.acr_login.value
+  registry_server   = data.azurerm_key_vault_secret.acr_url.value
+
+  depends_on = [
+    data.azurerm_key_vault_secret.acr_login,
+    data.azurerm_key_vault_secret.acr_url,
+    data.azurerm_key_vault_secret.acr_password,
+    module.aks
+  ]
+}
 
