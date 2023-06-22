@@ -1,0 +1,33 @@
+# https://github.com/bitnami/charts/blob/master/bitnami/nginx-ingress-controller/values.yaml
+ingressClassResource:
+  default: true
+
+nodeSelector:
+  kubernetes.io/os: linux
+
+autoscaling:
+  enabled: true
+  minReplicas: 5
+  maxReplicas: 15
+  targetCPU: 10
+
+resources:
+  limits:
+    cpu: "500m"
+    memory: "256Mi"
+  requests:
+    cpu: "100m"
+    memory: "256Mi"
+
+extraArgs:
+  default-ssl-certificate: "default/tls-wildcard-certificate"
+  ingress-class: nginx
+
+metrics:
+  enabled: true
+  serviceMonitor:
+    enabled: true
+    annotations:
+      release: "prometheus-operator"
+    labels:
+      release: "prometheus-operator"

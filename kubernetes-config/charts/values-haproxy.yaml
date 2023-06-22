@@ -1,3 +1,4 @@
+---
 autoscaling:
   enabled: true
   minReplicas: 2
@@ -7,5 +8,17 @@ serviceMonitor:
   ## Toggle the ServiceMonitor true if you have Prometheus Operator installed and configured
   enabled: true
 
-service:
-  type: LoadBalancer
+controller:
+  service:
+    type: LoadBalancer
+  ingressClass: haproxy
+  #controller.kind: DaemonSet
+  image:
+    pullPolicy: Always
+
+ingressClassResource:
+  name: haproxy
+  default: false
+
+controller.admissionWebhooks.patch.nodeSelector."kubernetes\.io/os": "linux"
+defaultBackend.nodeSelector."kubernetes\.io/os": "linux"

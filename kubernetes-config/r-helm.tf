@@ -14,11 +14,22 @@ resource "helm_release" "prometheus_operator" {
 resource "helm_release" "haproxy_ingress" {
   name             = "haproxy"
   repository       = "https://haproxytech.github.io/helm-charts"
-  chart            = "haproxy"
+  chart            = "kubernetes-ingress"
   namespace        = "ingress"
   force_update     = true
   create_namespace = true
+  version          = "1.30.6"
 
+  set {
+    name  = "controller.service.type"
+    value = "LoadBalancer"
+  }
+
+  set {
+    name = "--namespace-whitelist"
+    value = "dev"
+  }
+  
   values = [
     file("${path.module}/charts/values-haproxy.yaml")
   ]
@@ -46,19 +57,19 @@ resource "helm_release" "haproxy_ingress" {
 
 # }
 
-resource "helm_release" "nginx_test" {
-  name       = "nginx-test"
-  repository = "https://charts.bitnami.com/bitnami/"
-  chart      = "nginx"
-  version    = "15.0.2"
+# resource "helm_release" "nginx_test" {
+#   name       = "nginx-test"
+#   repository = "https://charts.bitnami.com/bitnami/"
+#   chart      = "nginx"
+#   version    = "15.0.2"
 
-  namespace        = "dev"
-  force_update     = true
-  create_namespace = true
+#   namespace        = "dev"
+#   force_update     = true
+#   create_namespace = true
 
-  depends_on = [helm_release.prometheus_operator]
+#   depends_on = [helm_release.prometheus_operator]
 
-}
+# }
 
 resource "helm_release" "cert_manager" {
   name             = "cert-manager"
@@ -67,6 +78,11 @@ resource "helm_release" "cert_manager" {
   namespace        = "cert-manager"
   create_namespace = true
   skip_crds        = true
+
+  set {
+    name  = "installCRDs"
+    value = true
+  }
 
   depends_on = []
 

@@ -2,16 +2,22 @@ terraform {
   required_providers {
     kubernetes = {
       source = "hashicorp/kubernetes"
-      #version = "2.21.1"
+      #version = ""
     }
 
     azurerm = {
       source = "hashicorp/azurerm"
-      #version = "~>2.0"
+      #version = ""
     }
 
     helm = {
       source = "hashicorp/helm"
+      #version = ""
+    }
+
+    cloudflare = {
+      source  = "cloudflare/cloudflare"
+      version = "~> 4.0"
     }
 
   }
@@ -55,10 +61,16 @@ provider "kubernetes" {
 }
 
 provider "helm" {
+  debug = true
   kubernetes {
     host                   = module.aks.host
     client_certificate     = base64decode(module.aks.client_certificate)
     client_key             = base64decode(module.aks.client_key)
     cluster_ca_certificate = base64decode(module.aks.cluster_ca_certificate)
   }
+}
+
+provider "cloudflare" {
+  email   = var.cloudflare_email
+  api_key = var.cloudflare_api_token
 }

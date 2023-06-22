@@ -73,10 +73,7 @@ resource "azurerm_key_vault_secret" "kv_aks_kubeconfig" {
   depends_on = [data.azurerm_key_vault.global_kv]
 }
 
-
-
-
-module "kubernetes-config" {
+module "kubernetes_config" {
   source       = "./kubernetes-config"
   cluster_name = "dev-killsh"
   kubeconfig   = module.aks.kube_config_raw
