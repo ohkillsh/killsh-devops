@@ -17,6 +17,12 @@ resource "cloudflare_record" "aks_ingress" {
   ttl     = 1
 
   depends_on = [data.cloudflare_zone.ohkillsh_win]
+
+  lifecycle {
+    ignore_changes = [
+      zone_id
+    ]
+  }
 }
 
 
@@ -28,4 +34,10 @@ resource "cloudflare_record" "aks_app_web" {
   ttl        = 1
   proxied    = true
   depends_on = [data.cloudflare_zone.ohkillsh_win]
+
+  lifecycle {
+    ignore_changes = [
+      zone_id
+    ]
+  }
 }
