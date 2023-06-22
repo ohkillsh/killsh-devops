@@ -26,10 +26,10 @@ resource "helm_release" "haproxy_ingress" {
   }
 
   set {
-    name = "--namespace-whitelist"
+    name = "namespace-whitelist"
     value = "dev"
   }
-  
+
   values = [
     file("${path.module}/charts/values-haproxy.yaml")
   ]

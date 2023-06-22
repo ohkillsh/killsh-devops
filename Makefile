@@ -2,6 +2,7 @@ init:
 	terraform init -upgrade
 
 plan:
+	rm -f tfplan
 	terraform plan -out tfplan 
 
 plan-fast:

@@ -29,7 +29,6 @@ resource "kubernetes_config_map_v1_data" "cfg_coredns" {
     loadbalance
 }
 import custom/*.server
-import custom/*.override
 ohkillsh.win:53 {
     errors
     cache 30
