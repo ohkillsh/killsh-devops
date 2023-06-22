@@ -1,3 +1,6 @@
+init:
+	terraform init -upgrade
+	
 plan:
 	terraform plan -out tfplan -refresh=false
 
