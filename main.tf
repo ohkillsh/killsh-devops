@@ -19,7 +19,7 @@ resource "azurerm_resource_group" "aks" {
 }
 
 module "network" {
-  source              = "git::https://github.com/ohkillsh/killsh-module-network.git?ref=main"
+  source              = "git@github.com:ohkillsh/killsh-module-network.git?ref=main"
   vnet_name           = "vnet-aks-lab"
   resource_group_name = azurerm_resource_group.aks.name
   address_space       = "10.10.0.0/16"
@@ -30,7 +30,7 @@ module "network" {
 }
 
 module "aks" {
-  source                           = "git::https://github.com/ohkillsh/killsh-module-aks?ref=main"
+  source                           = "git@github.com:ohkillsh/killsh-module-aks?ref=main"
   resource_group_name              = azurerm_resource_group.aks.name
   kubernetes_version               = "1.26.3"
   orchestrator_version             = "1.26.3"
@@ -75,7 +75,7 @@ resource "azurerm_key_vault_secret" "kv_aks_kubeconfig" {
 }
 
 module "kubernetes_config" {
-  source       = "./kubernetes-config"
+  source       = "git@github.com:ohkillsh/killsh-module-kubernetes-config?ref=main"
   cluster_name = "dev-killsh"
   kubeconfig   = module.aks.kube_config_raw
 
