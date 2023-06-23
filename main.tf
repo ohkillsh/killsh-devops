@@ -1,8 +1,3 @@
-resource "azurerm_resource_group" "aks" {
-  name     = "rg-aks-lab"
-  location = "eastus"
-}
-
 module "terraform_infra" {
   source = "git@github.com:ohkillsh/killsh-module-terraform-base-infra.git?ref=main"
 
@@ -16,6 +11,13 @@ module "terraform_infra" {
 
 }
 
+resource "azurerm_resource_group" "aks" {
+  name     = "rg-aks-lab"
+  location = "eastus"
+
+  depends_on = [module.terraform_infra]
+}
+
 module "network" {
   source              = "git::https://github.com/ohkillsh/killsh-module-network.git?ref=main"
   vnet_name           = "vnet-aks-lab"
@@ -23,7 +25,8 @@ module "network" {
   address_space       = "10.10.0.0/16"
   subnet_prefixes     = ["10.10.255.0/24", "10.10.0.0/20", "10.10.254.0/24"]
   subnet_names        = ["subnet-infra", "subnet-aks-pod", "subnet-bastion"]
-  depends_on          = [azurerm_resource_group.aks]
+
+  depends_on = [azurerm_resource_group.aks]
 }
 
 module "aks" {
@@ -63,8 +66,6 @@ module "aks" {
   depends_on = [module.network]
 }
 
-
-
 resource "azurerm_key_vault_secret" "kv_aks_kubeconfig" {
   name         = "aks-kubeconfig-raw"
   value        = module.aks.kube_config_raw
@@ -95,4 +96,7 @@ module "kubernetes_config" {
   ]
 }
 
+# resource "kubectl_manifest" "name" {
+#   yaml_body = "value"
 
+# }
