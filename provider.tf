@@ -81,24 +81,24 @@ provider "cloudflare" {
 }
 
 
-provider "kubectl" {
-  apply_retry_count      = 5
-  host                   = module.aks.host
-  cluster_ca_certificate = base64decode(module.aks.cluster_ca_certificate)
-  client_certificate     = base64decode(module.aks.client_certificate)
-  client_key             = base64decode(module.aks.client_key)
-  load_config_file       = false
+# provider "kubectl" {
+#   apply_retry_count      = 5
+#   host                   = module.aks.host
+#   cluster_ca_certificate = base64decode(module.aks.cluster_ca_certificate)
+#   client_certificate     = base64decode(module.aks.client_certificate)
+#   client_key             = base64decode(module.aks.client_key)
+#   load_config_file       = false
 
-  exec {
-    api_version = "client.authentication.k8s.io/v1beta1"
-    args = [
-      "get-token",
-      "--client-id", data.azurerm_key_vault_secret.tf-client-id.value,
-      "--client_secret", data.azurerm_key_vault_secret.tf-client-secret.value,
-      "--tenant-id", data.azurerm_key_vault_secret.tf-tenant-id.value,
-      "--login", "spn",
-      "--environment", "AzurePublicCloud",
-    ]
-    command = "/usr/local/bin/kubelogin"
-  }
-}
+#   exec {
+#     api_version = "client.authentication.k8s.io/v1beta1"
+#     args = [
+#       "get-token",
+#       "--client-id", data.azurerm_key_vault_secret.tf-client-id.value,
+#       "--client_secret", data.azurerm_key_vault_secret.tf-client-secret.value,
+#       "--tenant-id", data.azurerm_key_vault_secret.tf-tenant-id.value,
+#       "--login", "spn",
+#       "--environment", "AzurePublicCloud",
+#     ]
+#     command = "/usr/local/bin/kubelogin"
+#   }
+# }
