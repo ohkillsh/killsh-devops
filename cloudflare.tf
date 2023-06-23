@@ -4,14 +4,21 @@ data "cloudflare_zone" "ohkillsh_win" {
   depends_on = [module.kubernetes_config]
 }
 
-# output "debug" {
-#   value = module.kubernetes_config.ingress_public_ip
-# }
+data "kubernetes_resource" "loadbalancer_ingress_aks" {
+  api_version = "v1"
+  kind        = "Service"
+
+  metadata {
+    name      = "traefik"
+    namespace = "ingress"
+  }
+}
+
 
 resource "cloudflare_record" "aks_ingress" {
   zone_id = data.cloudflare_zone.ohkillsh_win.id
   name    = "ingress-dev-killsh"
-  value   = "20.253.29.58" #module.kubernetes_config.ingress_public_ip
+  value   = data.kubernetes_resource.loadbalancer_ingress_aks.object.status.loadBalancer.ingress.0.ip
   type    = "A"
   proxied = true
   ttl     = 1

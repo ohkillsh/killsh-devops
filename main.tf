@@ -95,8 +95,3 @@ module "kubernetes_config" {
     module.aks
   ]
 }
-
-# resource "kubectl_manifest" "name" {
-#   yaml_body = "value"
-
-# }
