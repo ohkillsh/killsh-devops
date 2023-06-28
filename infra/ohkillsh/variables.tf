@@ -7,10 +7,11 @@ variable "tags" {
   }
 }
 
-variable "global_key_vault_name" { default = "kv-global-killsh-tf" }
+# From: backend-support
+variable "global_key_vault_name" {}
+variable "global_resource_group" {}
 
-variable "global_resource_group" { default = "rg-global-killsh-tf" }
-
+# Provider Auth
 
 variable "cloudflare_email" {}
 variable "cloudflare_api_token" {}

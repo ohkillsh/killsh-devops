@@ -3,7 +3,6 @@ resource "azurerm_resource_group" "aks" {
   name     = "rg-aks-lab"
   location = "eastus"
 
-  depends_on = [module.terraform_infra]
 }
 
 module "network" {
