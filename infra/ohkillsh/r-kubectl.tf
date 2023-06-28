@@ -9,9 +9,9 @@ resource "kubectl_manifest" "traefik_nginx_app" {
   depends_on = [
     module.k8s_config_manifests
   ]
-  count              = length(data.kubectl_file_documents.app.documents)
-  yaml_body          = element(data.kubectl_file_documents.app.documents, count.index)
-  
+  count     = length(data.kubectl_file_documents.app.documents)
+  yaml_body = element(data.kubectl_file_documents.app.documents, count.index)
+
   override_namespace = "argocd"
 }
 

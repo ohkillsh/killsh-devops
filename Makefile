@@ -29,7 +29,7 @@ infra-base:
 	cd infra/backend-support && terraform apply tfplan
 
 infra-product:
-	cd infra/ohkillsh && terraform init 
+	cd infra/ohkillsh && terraform init -upgrade
 	cd infra/ohkillsh && terraform plan -out tfplan 
 	cd infra/ohkillsh && terraform apply tfplan
 
