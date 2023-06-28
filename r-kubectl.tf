@@ -1,22 +1,15 @@
-data "kubectl_file_documents" "namespace" {
-  content = file("./manifests/argocd/namespace.yaml")
+module "k8s_config_manifests" {
+    source = "git@github.com:ohkillsh/killsh-module-kubernetes-config.git//kubectl?ref=develop"
+}
+data "kubectl_file_documents" "my-nginx-app" {
+    content = file("./manifests/my-nginx-app.yaml")
 }
 
-data "kubectl_file_documents" "argocd" {
-  content = file("./manifests/argocd/install.yaml")
-}
-
-resource "kubectl_manifest" "namespace" {
-  count              = length(data.kubectl_file_documents.namespace.documents)
-  yaml_body          = element(data.kubectl_file_documents.namespace.documents, count.index)
-  override_namespace = "argocd"
-}
-
-resource "kubectl_manifest" "argocd" {
-  depends_on = [
-    kubectl_manifest.namespace,
-  ]
-  count              = length(data.kubectl_file_documents.argocd.documents)
-  yaml_body          = element(data.kubectl_file_documents.argocd.documents, count.index)
-  override_namespace = "argocd"
+resource "kubectl_manifest" "my-nginx-app" {
+    depends_on = [
+      module.k8s_config_manifests
+    ]
+    count     = length(data.kubectl_file_documents.my-nginx-app.documents)
+    yaml_body = element(data.kubectl_file_documents.my-nginx-app.documents, count.index)
+    override_namespace = "argocd"
 }
