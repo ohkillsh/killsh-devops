@@ -1,4 +1,4 @@
-module "kubernetes_config" {
+module "kubernetes_config2" {
   source       = "git@github.com:ohkillsh/killsh-module-kubernetes-config.git//kubernetes?ref=main"
   cluster_name = "dev-killsh"
   kubeconfig   = module.aks.kube_config_raw
@@ -21,25 +21,28 @@ module "kubernetes_config" {
 }
 
 module "helm_config" {
-  source       = "git@github.com:ohkillsh/killsh-module-kubernetes-config.git//helm?ref=main"
+  source = "git@github.com:ohkillsh/killsh-module-kubernetes-config.git//helm?ref=main"
+
+  depends_on = [module.kubernetes_config2]
 }
 
 module "k8s_config_manifests" {
   source = "git@github.com:ohkillsh/killsh-module-kubernetes-config.git//kubectl?ref=main"
 
-  depends_on = [ module.helm_config ]
-}
-data "kubectl_file_documents" "app" {
-  content = file("./manifests/argocd/traefik-nginx-app.yaml")
+  depends_on = [module.helm_config]
 }
 
-resource "kubectl_manifest" "traefik_nginx_app" {
+data "kubectl_file_documents" "argocd_apps" {
+  pattern = "./manifests/argocd/*.yaml"
+}
+
+resource "kubectl_manifest" "argocd_apps" {
+  for_each  = data.kubectl_file_documents.argocd_apps.manifests
+  yaml_body = each.value
+
   depends_on = [
-    module.k8s_config_manifests
+    module.k8s_config_manifests,
+    data.kubectl_file_documents.app
   ]
-  count     = length(data.kubectl_file_documents.app.documents)
-  yaml_body = element(data.kubectl_file_documents.app.documents, count.index)
-
-  override_namespace = "argocd"
 }
 
