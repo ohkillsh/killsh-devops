@@ -56,8 +56,8 @@ stages:
 
         # - template: Common.Templates/Process/pre_job.yaml@ci-templates
         #   parameters:
-        #     Subscription-ID: $(TF-Subscription-ID)
-        #     KeyVault-Name: $(TF-Keyvault-Name)
+        #     SubscriptionID: $(TF-Subscription-ID)
+        #     KeyVaultName: $(TF-Keyvault-Name)
         - template: Common.Templates/Terraform/stage_plan.yaml@ci-templates
 
   - stage: APPLY
