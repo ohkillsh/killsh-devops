@@ -33,16 +33,17 @@ module "k8s_config_manifests" {
 }
 
 data "kubectl_file_documents" "argocd_apps" {
-  pattern = "./manifests/argocd/*.yaml"
+  content = file("./manifests/argocd/traefik-nginx-app.yaml")
 }
 
 resource "kubectl_manifest" "argocd_apps" {
   for_each  = data.kubectl_file_documents.argocd_apps.manifests
   yaml_body = each.value
-
+  
   depends_on = [
     module.k8s_config_manifests,
-    data.kubectl_file_documents.app
+    data.kubectl_file_documents.argocd_apps
   ]
+
 }
 

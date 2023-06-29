@@ -1,0 +1,88 @@
+name: 1.0.$(Rev:r)
+
+trigger:
+  branches:
+    include:
+      - main
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+resources: 
+  repositories:
+  - repository: ci-templates
+    type: github
+    name: 
+    endpoint: 
+    ref: main
+
+parameters: # Runtime Execution
+  - name: runTFsec
+    displayName: Run Terrafom TFsec?
+    type: boolean
+    default: false
+
+  - name: runCheckChanges
+    displayName: Run Terrafom CheckChanges?
+    type: boolean
+    default: false
+
+variables:
+  TF-BACKEND-RESOURCEGROUP: "rg-global-ohkillsh-tf"
+  TF-BACKEND-STGNAME: "stgtfglobalohkillsh"
+  TF-BACKEND-STGCONTAINER: "terraform"
+  TF-BACKEND-STGKEY: "ohkillsh.infra.tfstate"
+  TF-Keyvault-Name: kv-global-ohkillsh-tf
+  TF-Environment-Name: dev
+  TF-Path: 'infra/ohkillsh'
+  TF-Subscription-ID: "az-test"
+  tf_in_automation: true
+  tf_parallelism: 20
+
+stages:
+  - stage: PLAN
+    displayName: "Terraform - Plan"
+    jobs:
+    - job:
+      steps: 
+
+        - task: AzureKeyVault@1
+          inputs:
+            azureSubscription: $(TF-Subscription-ID)
+            KeyVaultName: $(TF-KeyVault-Name)
+            SecretsFilter: "*"
+            RunAsPreJob: true
+          displayName: "Load Secrets from Azure KeyVault"
+
+        - template: Common.Templates/Process/pre_job.yaml@ci-templates
+          parameters:
+            Subscription-ID: $(TF-Subscription-ID)
+            KeyVault-Name: $(TF-Keyvault-Name)
+        - template: Common.Templates/Terraform/stage_plan.yaml@ci-templates
+
+  - stage: APPLY
+    jobs:
+      - deployment: ApplyStage
+        displayName: "Terraform - Apply"
+        environment: $(TF-Environment-Name)
+        workspace:
+          clean: all
+        strategy:
+          runOnce:
+            deploy:
+              steps:
+                - checkout: none
+
+                - task: AzureKeyVault@1
+                  inputs:
+                    azureSubscription: $(TF-Subscription-ID)
+                    KeyVaultName: $(TF-KeyVault-Name)
+                    SecretsFilter: "*"
+                    RunAsPreJob: true
+                  displayName: "Load Secrets from Azure KeyVault"
+
+                - template: Common.Templates/Process/pre_job.yaml@ci-templates
+                  parameters:
+                    Subscription-ID: $(TF-Subscription-ID)
+                    KeyVault-Name: $(TF-Keyvault-Name)
+                - template: Common.Templates/Terraform/stage_apply.yaml@ci-templates
