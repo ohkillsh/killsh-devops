@@ -54,10 +54,10 @@ stages:
             RunAsPreJob: true
           displayName: "Load Secrets from Azure KeyVault"
 
-        - template: Common.Templates/Process/pre_job.yaml@ci-templates
-          parameters:
-            Subscription-ID: $(TF-Subscription-ID)
-            KeyVault-Name: $(TF-Keyvault-Name)
+        # - template: Common.Templates/Process/pre_job.yaml@ci-templates
+        #   parameters:
+        #     Subscription-ID: $(TF-Subscription-ID)
+        #     KeyVault-Name: $(TF-Keyvault-Name)
         - template: Common.Templates/Terraform/stage_plan.yaml@ci-templates
 
   - stage: APPLY
