@@ -12,9 +12,9 @@ resources:
   repositories:
   - repository: ci-templates
     type: github
-    name: 
-    endpoint: 
-    ref: main
+    name: ohkillsh/ci-templates
+    endpoint: ohkillsh
+    ref: refs/heads/main
 
 parameters: # Runtime Execution
   - name: runTFsec
