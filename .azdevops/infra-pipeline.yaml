@@ -62,7 +62,7 @@ stages:
 
         # - template: Common.Templates/Process/pre_job.yaml@ci-templates
         #   parameters:
-        #     SubscriptionID: $(TF-Subscription-ID)
+        #     subscription-id: $(TF-Subscription-ID)
         #     KeyVaultName: $(TF-Keyvault-Name)
         - template: Common.Templates/Terraform/stage_plan.yaml@ci-templates
 
@@ -89,6 +89,6 @@ stages:
 
                 - template: Common.Templates/Process/pre_job.yaml@ci-templates
                   parameters:
-                    SubscriptionID: $(TF-Subscription-ID)
+                    subscription-id: $(TF-Subscription-ID)
                     KeyVaultName: $(TF-Keyvault-Name)
                 - template: Common.Templates/Terraform/stage_apply.yaml@ci-templates
