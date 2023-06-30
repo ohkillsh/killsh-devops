@@ -9,8 +9,8 @@ variable "tags" {
 
 # From: backend-support
 variable "project_name" {
-  type = string
-  default = "ohkillsh"
+  type        = string
+  default     = "ohkillsh"
   description = "Name of the project"
 }
 
