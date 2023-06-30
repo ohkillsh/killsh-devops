@@ -47,23 +47,16 @@ stages:
     - job:
       steps: 
 
-        - task: AzureKeyVault@1
-          inputs:
-            azureSubscription: $(TF-Subscription-ID)
-            KeyVaultName: $(TF-KeyVault-Name)
-            SecretsFilter: "*"
-            RunAsPreJob: true
-          displayName: "Load Secrets from Azure KeyVault"
+        - template: Common.Templates/Process/pre_job.yaml@ci-templates
+          parameters:
+            subscription-id: $(TF-Subscription-ID)
+            KeyVaultName: $(TF-Keyvault-Name)
 
         - task: InstallSSHKey@0 # Chave SSH para baixar os módulos do projeto de terraform
           inputs:
             knownHostsEntry: $(known_host)
             sshKeySecureFile: id_rsa
 
-        # - template: Common.Templates/Process/pre_job.yaml@ci-templates
-        #   parameters:
-        #     subscription-id: $(TF-Subscription-ID)
-        #     KeyVaultName: $(TF-Keyvault-Name)
         - template: Common.Templates/Terraform/stage_plan.yaml@ci-templates
 
   - stage: APPLY
