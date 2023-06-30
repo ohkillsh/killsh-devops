@@ -8,8 +8,12 @@ variable "tags" {
 }
 
 # From: backend-support
-variable "global_key_vault_name" {}
-variable "global_resource_group" {}
+variable "project_name" {
+  type = string
+  default = "ohkillsh"
+  description = "Name of the project"
+}
+
 
 # Provider Auth
 

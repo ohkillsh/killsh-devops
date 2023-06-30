@@ -1,6 +1,6 @@
 data "azurerm_key_vault" "global_kv" {
-  name                = var.global_key_vault_name
-  resource_group_name = var.global_resource_group
+  name                = local.gloval_kv_name
+  resource_group_name = local.global_rg
 
   depends_on = [module.aks]
 }
