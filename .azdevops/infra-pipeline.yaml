@@ -34,7 +34,7 @@ variables:
   TF-BACKEND-STGKEY: "ohkillsh.infra.tfstate"
   TF-Keyvault-Name: kv-global-ohkillsh-tf
   TF-Environment-Name: dev
-  TF-Path: 'infra/ohkillsh'
+  TF-Path: 'infra/base'
   TF-Subscription-ID: "az-test"
   tf_in_automation: true
   tf_parallelism: 20
