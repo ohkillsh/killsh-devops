@@ -49,7 +49,7 @@ stages:
 
         - template: Common.Templates/Process/pre_job.yaml@ci-templates
           parameters:
-            subscription-id: $(TF-Subscription-ID)
+            subscriptionId: $(TF-Subscription-ID)
             KeyVaultName: $(TF-Keyvault-Name)
 
         - task: InstallSSHKey@0 # Chave SSH para baixar os módulos do projeto de terraform
@@ -82,6 +82,6 @@ stages:
 
                 - template: Common.Templates/Process/pre_job.yaml@ci-templates
                   parameters:
-                    subscription-id: $(TF-Subscription-ID)
+                    subscriptionId: $(TF-Subscription-ID)
                     KeyVaultName: $(TF-Keyvault-Name)
                 - template: Common.Templates/Terraform/stage_apply.yaml@ci-templates
