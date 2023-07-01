@@ -13,6 +13,7 @@ spec:
     path: app/web-nginx-traefik
   destination:
     server: https://kubernetes.default.svc
+    namespace: dev
   syncPolicy:
     automated:
       selfHeal: true

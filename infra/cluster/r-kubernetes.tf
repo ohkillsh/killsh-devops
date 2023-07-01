@@ -26,7 +26,7 @@ module "k8s_config_manifests" {
 }
 
 data "kubectl_file_documents" "argocd_apps" {
-  content = file("./manifests/argocd/traefik-nginx-app.yaml")
+  content = file("${path.root}/manifests/argocd/traefik-nginx-app.yaml")
 }
 
 resource "kubectl_manifest" "argocd_apps" {
