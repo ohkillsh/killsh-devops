@@ -29,7 +29,7 @@ data "kubectl_file_documents" "argocd_apps" {
   content = file("./manifests/argocd/traefik-nginx-app.yaml")
 }
 
-resource "kubectl_manifest" "argocd_apps_2" {
+resource "kubectl_manifest" "argocd_apps" {
   
   for_each = data.kubectl_file_documents.argocd_apps.manifests
   yaml_body = each.value

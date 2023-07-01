@@ -31,14 +31,16 @@ provider "azurerm" {
 }
 
 provider "kubernetes" {
-  host                   = module.aks.host
-  client_certificate     = base64decode(module.aks.client_certificate)
-  client_key             = base64decode(module.aks.client_key)
-  cluster_ca_certificate = base64decode(module.aks.cluster_ca_certificate)
+
+  config_path = "../base/kubeconfig"
+  # host                   = module.aks.host
+  # client_certificate     = base64decode(module.aks.client_certificate)
+  # client_key             = base64decode(module.aks.client_key)
+  # cluster_ca_certificate = base64decode(module.aks.cluster_ca_certificate)
 
 }
 
 provider "cloudflare" {
-  email   = var.cloudflare_email
-  api_key = var.cloudflare_api_token
+  email   = data.azurerm_key_vault_secret.cloudflare-email.value
+  api_key = data.azurerm_key_vault_secret.cloudflare-token.value
 }
