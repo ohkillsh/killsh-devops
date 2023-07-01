@@ -64,14 +64,14 @@ provider "kubectl" {
 
   config_path       = "../base/kubeconfig"
   apply_retry_count = 5
-  load_config_file  = false
+  load_config_file  = true
 
 
   # host                   = module.aks.host
   # cluster_ca_certificate = base64decode(module.aks.cluster_ca_certificate)
   # client_certificate     = base64decode(module.aks.client_certificate)
   # client_key             = base64decode(module.aks.client_key)
-
+  #load_config_file        = false
 
   # exec {
   #   api_version = "client.authentication.k8s.io/v1beta1"

@@ -19,23 +19,25 @@ module "helm_config" {
   source = "git@github.com:ohkillsh/killsh-module-kubernetes-config.git//helm?ref=main"
 }
 
-# module "k8s_config_manifests" {
-#   source = "git@github.com:ohkillsh/killsh-module-kubernetes-config.git//kubectl?ref=main"
+module "k8s_config_manifests" {
+  source = "git@github.com:ohkillsh/killsh-module-kubernetes-config.git//kubectl?ref=main"
 
-#   depends_on = [module.helm_config]
-# }
+  depends_on = [module.helm_config]
+}
 
-# data "kubectl_file_documents" "argocd_apps" {
-#   content = file("./manifests/argocd/traefik-nginx-app.yaml")
-# }
+data "kubectl_file_documents" "argocd_apps" {
+  content = file("./manifests/argocd/traefik-nginx-app.yaml")
+}
 
-# resource "kubectl_manifest" "argocd_apps" {
-#   yaml_body = data.kubectl_file_documents.argocd_apps.manifests
+resource "kubectl_manifest" "argocd_apps" {
+  
+  for_each = data.kubectl_file_documents.argocd_apps.manifests
+  yaml_body = each.value
 
-#   depends_on = [
-#     module.k8s_config_manifests,
-#     data.kubectl_file_documents.argocd_apps
-#   ]
+  depends_on = [
+    module.k8s_config_manifests,
+    data.kubectl_file_documents.argocd_apps
+  ]
 
-# }
+}
 

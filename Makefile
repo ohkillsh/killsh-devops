@@ -33,3 +33,13 @@ base.infra:
 	cd infra/base && terraform plan -out tfplan 
 	cd infra/base && terraform apply tfplan
 
+cluster.infra:
+	cd infra/cluster && terraform init -upgrade
+	cd infra/cluster && terraform plan -out tfplan 
+	cd infra/cluster && terraform apply tfplan
+
+cf.infra:
+	cd infra/cloudflare && terraform init -upgrade
+	cd infra/cloudflare && terraform plan -out tfplan 
+	cd infra/cloudflare && terraform apply tfplan
+
