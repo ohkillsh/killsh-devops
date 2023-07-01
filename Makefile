@@ -11,11 +11,11 @@ plan-fast:
 apply:
 	terraform apply "tfplan"
 
-destroy-all:
-	terraform destroy --auto-approve
-
 destroy:
-	terraform destroy "tfplan"
+	cd infra/cloudflare && terraform destroy --auto-approve
+	cd infra/cluster && terraform destroy --auto-approve
+	cd infra/base && terraform destroy "tfplan"
+
 
 clean:
 	rm -rf .terraform/
