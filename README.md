@@ -31,3 +31,9 @@ resource "helm_release" "nginx" {
 }
 
 ```
+
+## TODO'S
+
+TODO 1: To create manualy the secret and then map to the key vault to use on the AKS creation (SECURE)
+TODO 2: Make it run in pipeline without break
+TODO 3: 

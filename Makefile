@@ -23,13 +23,13 @@ clean:
 	rm -f terraform.lock.hcl
 
 
-infra-base:
+backend-support.infra:
 	cd infra/backend-support &&	terraform init 
 	cd infra/backend-support && terraform plan -out tfplan 
 	cd infra/backend-support && terraform apply tfplan
 
-infra-product:
-	cd infra/ohkillsh && terraform init -upgrade
-	cd infra/ohkillsh && terraform plan -out tfplan 
-	cd infra/ohkillsh && terraform apply tfplan
+base.infra:
+	cd infra/base && terraform init -upgrade
+	cd infra/base && terraform plan -out tfplan 
+	cd infra/base && terraform apply tfplan
 

@@ -66,3 +66,8 @@ resource "azurerm_key_vault_secret" "kv_aks_kubeconfig" {
   depends_on = [data.azurerm_key_vault.global_kv]
 }
 
+resource "local_file" "kubeconfig" {
+  content  = module.aks.kube_config_raw
+  filename = "${path.root}/kubeconfig"
+}
+
