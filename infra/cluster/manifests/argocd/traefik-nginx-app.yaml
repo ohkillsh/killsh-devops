@@ -11,8 +11,6 @@ spec:
     repoURL: https://github.com/ohkillsh/killsh-gitops.git
     targetRevision: HEAD
     path: app/web-nginx-traefik
-    kustomize:
-      namespace: dev
   destination:
     server: https://kubernetes.default.svc
   syncPolicy:
