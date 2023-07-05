@@ -30,13 +30,13 @@ data "kubectl_file_documents" "argocd_apps" {
 }
 
 resource "kubectl_manifest" "argocd_apps" {
-  
-  for_each = data.kubectl_file_documents.argocd_apps.manifests
+
+  for_each  = data.kubectl_file_documents.argocd_apps.manifests
   yaml_body = each.value
-  
+
   #override_namespace = "dev"
 
-  depends_on = [ module.k8s_config_manifests  ]
+  depends_on = [module.k8s_config_manifests]
 
 }
 

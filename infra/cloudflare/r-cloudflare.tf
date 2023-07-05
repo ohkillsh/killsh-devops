@@ -12,7 +12,7 @@ data "kubernetes_resource" "loadbalancer_ingress_aks" {
     namespace = "ingress"
   }
 
-  depends_on = [ data.cloudflare_zone.ohkillsh_win  ]
+  depends_on = [data.cloudflare_zone.ohkillsh_win]
 }
 
 
