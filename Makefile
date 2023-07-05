@@ -12,9 +12,9 @@ apply:
 	terraform apply "tfplan"
 
 destroy:
-	cd infra/cloudflare && terraform destroy --auto-approve
-	cd infra/cluster && terraform destroy --auto-approve
-	cd infra/base && terraform destroy "tfplan"
+	cd infra/cloudflare && terraform destroy --auto-approve -lock=false
+	cd infra/cluster && terraform destroy --auto-approve -lock=false
+	cd infra/base && terraform destroy  --auto-approve -lock=false
 
 
 clean:
