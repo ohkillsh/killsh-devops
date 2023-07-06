@@ -52,3 +52,21 @@ resource "cloudflare_record" "aks_app_web" {
     ]
   }
 }
+
+resource "cloudflare_record" "aks_infra_headlamp" {
+  zone_id    = data.cloudflare_zone.ohkillsh_win.id
+  name       = "headlamp"
+  value      = cloudflare_record.aks_ingress.hostname
+  type       = "CNAME"
+  ttl        = 1
+  proxied    = true
+  depends_on = [resource.cloudflare_record.aks_ingress]
+
+  lifecycle {
+    ignore_changes = [
+      zone_id
+    ]
+  }
+}
+
+
