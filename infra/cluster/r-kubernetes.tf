@@ -19,24 +19,23 @@ module "helm_config" {
   source = "git@github.com:ohkillsh/killsh-module-kubernetes-config.git//helm?ref=main"
 }
 
-module "k8s_config_manifests" {
-  source = "git@github.com:ohkillsh/killsh-module-kubernetes-config.git//kubectl?ref=main"
+resource "null_resource" "deploy_argo" {
+  triggers = {}
 
-  depends_on = [module.helm_config]
+  provisioner "local-exec" {
+
+    command = "kubectl create namespace argocd --kubeconfig ../base/kubeconfig && kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml --kubeconfig ../base/kubeconfig"
+  }
 }
 
-data "kubectl_file_documents" "argocd_apps" {
-  content = file("${path.root}/manifests/argocd/traefik-nginx-app.yaml")
+resource "null_resource" "argocd_app_1" {
+  triggers = {}
+
+  provisioner "local-exec" {
+    command = "kubectl apply --kubeconfig ../base/kubeconfig -f ${path.root}/manifests/argocd/traefik-nginx-app.yaml"
+  }
+
+  depends_on = [null_resource.deploy_argo]
 }
 
-resource "kubectl_manifest" "argocd_apps" {
-
-  for_each  = data.kubectl_file_documents.argocd_apps.manifests
-  yaml_body = each.value
-
-  #override_namespace = "dev"
-
-  depends_on = [module.k8s_config_manifests]
-
-}
 
