@@ -1,0 +1,14 @@
+#cluster-secret-store.yaml
+apiVersion: external-secrets.io/v1beta1
+kind: ClusterSecretStore
+metadata:
+  name: azure-cluster-secret-store
+  namespace: external-secrets
+spec:
+  provider:
+    # provider type: azure keyvault
+    azurekv:
+      authType: ManagedIdentity
+      identityId: "cd30523b-6919-43dd-a44b-4fb6a4321fc8" # "<MI_clientId>"
+      vaultUrl: https://kv-aks-app.vault.azure.net/
+      
