@@ -1,13 +1,9 @@
-
-
-apply:
-	terraform apply "tfplan"
-
 destroy:
 	cd infra/cloudflare && terraform destroy --auto-approve -lock=false
 	cd infra/cluster && terraform destroy --auto-approve -lock=false
 	cd infra/base && terraform destroy  --auto-approve -lock=false
 
+create: base.infra cluster.infra cf.infra
 
 clean:
 	rm -rf .terraform/
